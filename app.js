@@ -1,15 +1,14 @@
 const express = require('express');
+const apiRouter = require('./routes/api');
+
 const app = express();
-const apiRouter = require('./routes/api'); 
-
-app.use(express.json());
-
 
 app.use('/api', apiRouter);
 
-
+// Error handling middleware
 app.use((err, req, res, next) => {
-  res.status(err.status || 500).send({ error: err.message || 'Internal Server Error' });
+  console.error(err);
+  res.status(500).send({ msg: 'Internal Server Error' });
 });
 
 module.exports = app;

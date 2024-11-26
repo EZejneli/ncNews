@@ -1,10 +1,12 @@
 const express = require('express');
 const apiRouter = express.Router();
-const endpoints = require('../endpoints.json'); 
+const { getEndpoints } = require('../controllers/apiController');
+const { getTopics } = require('../controllers/topicsController');
 
-// Handle GET requests to `/api`
-apiRouter.get('/', (req, res) => {
-  res.status(200).send(endpoints);
-});
+
+apiRouter.get('/', getEndpoints);
+
+
+apiRouter.get('/topics', getTopics);
 
 module.exports = apiRouter;
