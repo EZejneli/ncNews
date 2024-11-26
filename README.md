@@ -30,12 +30,6 @@ Create two .env files in the root of your project:
 .env.development
 .env.test
 
-### Add the following to each file, replacing <DATABASE_NAME> with the appropriate name found in /db/setup.sql:
-
-PGDATABASE=<DATABASE_NAME>
-
-Ensure .env files are ignored by Git: The .env.* files are already included in the .gitignore file, so they will not be committed to the repository.
-
 ### Database Setup
 
 ## To create and seed the databases:
