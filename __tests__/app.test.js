@@ -63,6 +63,7 @@ describe("GET /api/articles/:article_id", () => {
       .get("/api/articles/1")
       .expect(200)
       .then(({ body }) => {
+        expect(body.article).toHaveProperty("article_id", 1);
         expect(body.article).toHaveProperty("title");
         expect(body.article).toHaveProperty("topic");
         expect(body.article).toHaveProperty("author");
@@ -82,6 +83,14 @@ describe("GET /api/articles/:article_id", () => {
       });
   });
 
+  test("400: Responds with an error message when the article_id is invalid", () => {
+    return request(app)
+      .get("/api/articles/bananas")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
 });
 
 describe("GET /api/articles", () => {
@@ -90,16 +99,79 @@ describe("GET /api/articles", () => {
       .get("/api/articles")
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles).toBeInstanceOf(Array);
-        body.articles.forEach((article) => {
+        const articles = body.articles;
+        expect(articles.length).toBeGreaterThan(0);
+        articles.forEach((article) => {
           expect(article).toHaveProperty("title");
           expect(article).toHaveProperty("topic");
           expect(article).toHaveProperty("author");
           expect(article).toHaveProperty("created_at");
           expect(article).toHaveProperty("votes");
           expect(article).toHaveProperty("article_img_url");
+          expect(article).toHaveProperty("comment_count");
         });
       });
   });
 
+  test("200: Articles are sorted by created_at in descending order by default", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        const articles = body.articles;
+        expect(articles).toBeInstanceOf(Array);
+        for (let i = 1; i < articles.length; i++) {
+          expect(new Date(articles[i - 1].created_at).getTime()).toBeGreaterThanOrEqual(new Date(articles[i].created_at).getTime());
+        }
+      });
+  });
+
+  test("200: Each article object includes a comment_count property", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        const articles = body.articles;
+        articles.forEach((article) => {
+          expect(article).toHaveProperty("comment_count");
+        });
+      });
+  });
+});
+
+describe("GET /api/articles/:article_id/comments", () => {
+  test("200: Responds with an array of comments for the given article_id", () => {
+    return request(app)
+      .get("/api/articles/2/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toBeInstanceOf(Array);
+        body.comments.forEach((comment) => {
+          expect(comment).toHaveProperty("comment_id");
+          expect(comment).toHaveProperty("votes");
+          expect(comment).toHaveProperty("created_at");
+          expect(comment).toHaveProperty("author");
+          expect(comment).toHaveProperty("body");
+          expect(comment).toHaveProperty("article_id");
+        });
+      });
+  });
+
+  test("404: Responds with an error message when the article does not exist", () => {
+    return request(app)
+      .get("/api/articles/999999/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not Found");
+      });
+  });
+
+  test("200: Responds with an empty array when the article has no comments", () => {
+    return request(app)
+      .get("/api/articles/4/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toEqual([]);
+      });
+  });
 });

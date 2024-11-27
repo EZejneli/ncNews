@@ -1,6 +1,9 @@
 const db = require('../db/connection');
 
 exports.fetchArticleById = (article_id) => {
+    if (isNaN(article_id)) {
+        return Promise.reject({ status: 400, msg: 'Bad Request' });
+    }
     return db
         .query(
             `SELECT author, title, article_id, body, topic, created_at, votes, article_img_url
