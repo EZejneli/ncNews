@@ -8,8 +8,9 @@
     "seed": "node ./db/seeds/run-seed.js",
     "test": "jest",
     "prepare": "husky install",
-    "start": "node app.js",
-    "dev": "nodemon listen.js"
+    "start": "node listen.js",
+    "dev": "nodemon listen.js",
+    "seed-prod": "NODE_ENV=production node npm run seed"
   },
   "repository": {
     "type": "git",
@@ -30,9 +31,9 @@
     "pg-format": "^1.0.4"
   },
   "dependencies": {
-    "dotenv": "^16.0.0",
+    "dotenv": "^16.4.5",
     "express": "^4.21.1",
-    "pg": "^8.7.3",
+    "pg": "^8.13.1",
     "supertest": "^7.0.0"
   },
   "jest": {
