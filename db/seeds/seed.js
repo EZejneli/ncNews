@@ -66,7 +66,7 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
       const topicsPromise = db.query(insertTopicsQueryStr);
 
       const insertUsersQueryStr = format(
-        'INSERT INTO users ( username, name, avatar_url) VALUES %L;',
+        'INSERT INTO users (username, name, avatar_url) VALUES %L;',
         userData.map(({ username, name, avatar_url }) => [
           username,
           name,

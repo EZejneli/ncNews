@@ -1,7 +1,8 @@
+const commentsRouter = require('express').Router({ mergeParams: true });
+const { getCommentsByArticleId, addCommentToArticle } = require('../controllers/comments.controller');
 
-const commentsRouter = require('express').Router();
-const { getCommentsByArticleId } = require('../controllers/comments.controller');
-
-commentsRouter.route('/:article_id/comments').get(getCommentsByArticleId);
+commentsRouter.route('/')
+  .get(getCommentsByArticleId)
+  .post(addCommentToArticle);
 
 module.exports = commentsRouter;
