@@ -137,6 +137,50 @@ describe("GET /api/articles", () => {
         });
       });
   });
+
+  test("200: Responds with articles sorted by any valid column", () => {
+    return request(app)
+      .get("/api/articles?sort_by=title")
+      .expect(200)
+      .then(({ body }) => {
+        const articles = body.articles;
+        expect(articles).toBeInstanceOf(Array);
+        for (let i = 1; i < articles.length; i++) {
+          expect(articles[i - 1].title.localeCompare(articles[i].title)).toBeGreaterThanOrEqual(0);
+        }
+      });
+  });
+
+  test("200: Responds with articles sorted in ascending order", () => {
+    return request(app)
+      .get("/api/articles?order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        const articles = body.articles;
+        expect(articles).toBeInstanceOf(Array);
+        for (let i = 1; i < articles.length; i++) {
+          expect(new Date(articles[i - 1].created_at).getTime()).toBeLessThanOrEqual(new Date(articles[i].created_at).getTime());
+        }
+      });
+  });
+
+  test("400: Responds with 'Bad Request' for invalid sort_by query", () => {
+    return request(app)
+      .get("/api/articles?sort_by=invalid_column")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+
+  test("400: Responds with 'Bad Request' for invalid order query", () => {
+    return request(app)
+      .get("/api/articles?order=invalid_order")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
 });
 
 describe("GET /api/articles/:article_id/comments", () => {
