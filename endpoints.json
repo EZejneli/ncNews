@@ -26,6 +26,19 @@
       ]
     }
   },
+  "GET /api/users": {
+    "description": "serves an array of all users",
+    "queries": [],
+    "exampleResponse": {
+      "users": [
+        {
+          "username": "tickle122",
+          "name": "Tom Tickle",
+          "avatar_url": "https://vignette.wikia.nocookie.net/mrmen/images/d/d6/Mr-Tickle-9a.png/revision/latest?cb=20180127221953"
+        }
+      ]
+    }
+  },
   "/api/articles/:article_id": {
     "GET": {
       "description": "serves an article object by article_id",

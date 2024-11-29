@@ -335,3 +335,28 @@ describe('DELETE /api/comments/:comment_id', () => {
       });
   });
 });
+
+describe("GET /api/users", () => {
+  test("200: Responds with an array of user objects", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.users).toBeInstanceOf(Array);
+        body.users.forEach((user) => {
+          expect(user).toHaveProperty("username");
+          expect(user).toHaveProperty("name");
+          expect(user).toHaveProperty("avatar_url");
+        });
+      });
+  });
+
+  test("404: Responds with an error message when the endpoint does not exist", () => {
+    return request(app)
+      .get("/api/not-a-route")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not Found");
+      });
+  });
+});
