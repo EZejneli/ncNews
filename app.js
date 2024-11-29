@@ -1,10 +1,12 @@
 const express = require('express');
 const app = express();
 const apiRouter = require('./routes/api.router');
+const commentsRouter = require('./routes/comments.router');
 
 app.use(express.json());
 
 app.use('/api', apiRouter);
+app.use('/api/comments', commentsRouter);
 
 app.all('/*', (req, res) => {
   res.status(404).send({ msg: 'Not Found' });
