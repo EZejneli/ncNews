@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const apiRouter = require('./routes/api.router');
 const commentsRouter = require('./routes/comments.router');
+const cors = require('cors');
 
 app.use(express.json());
 
