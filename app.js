@@ -17,7 +17,6 @@ app.all('/*', (req, res) => {
 });
 
 app.use((err, req, res, next) => {
-  console.error('Error:', err);
   if (err.status && err.msg) {
     res.status(err.status).send({ msg: err.msg });
   } else if (err.code === '23503') {
