@@ -4,7 +4,17 @@ const apiRouter = require('./routes/api.router');
 const commentsRouter = require('./routes/comments.router');
 const cors = require('cors');
 
+app.use(cors({
+  origin: 'http://localhost:5173'
+}));
 app.use(express.json());
+
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', 'http://localhost:5173');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  next();
+});
 
 app.use('/api', apiRouter);
 app.use('/api/comments', commentsRouter);
@@ -17,9 +27,7 @@ app.use((err, req, res, next) => {
   if (err.status && err.msg) {
     res.status(err.status).send({ msg: err.msg });
   } else if (err.code === '23503') {
-    res.status(404).send({ msg: 'Not Found' });
-  } else if (err.code === '22P02' || err.code === '23502') {
-    res.status(400).send({ msg: 'Bad Request' });
+    res.status(404).send({ msg: 'Not Found' });  } else if (err.code === '22P02' || err.code === '23502') {    res.status(400).send({ msg: 'Bad Request' });
   } else {
     res.status(500).send({ msg: 'Internal Server Error' });
   }
