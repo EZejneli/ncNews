@@ -19,7 +19,7 @@ exports.fetchArticleById = (article_id) => {
         });
 };
 
-exports.fetchArticles = (sort_by = 'created_at', order = 'desc') => {
+exports.fetchArticles = (sort_by = 'created_at', order = 'desc', topic) => {
   const validSortBy = ['author', 'title', 'article_id', 'topic', 'created_at', 'votes', 'article_img_url', 'comment_count'];
   const validOrder = ['asc', 'desc'];
 
@@ -31,16 +31,25 @@ exports.fetchArticles = (sort_by = 'created_at', order = 'desc') => {
     ? `LOWER(articles.${sort_by}) ${order}`
     : `articles.${sort_by} ${order}`;
 
-  const queryStr = `
+  let queryStr = `
     SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, 
     COUNT(comments.comment_id)::INT AS comment_count
     FROM articles
     LEFT JOIN comments ON articles.article_id = comments.article_id
+  `;
+  const queryParams = [];
+
+  if (topic) {
+    queryStr += ' WHERE articles.topic = $1';
+    queryParams.push(topic);
+  }
+
+  queryStr += `
     GROUP BY articles.article_id
     ORDER BY ${orderByClause};
   `;
 
-  return db.query(queryStr).then((result) => {
+  return db.query(queryStr, queryParams).then((result) => {
     return result.rows;
   });
 };
