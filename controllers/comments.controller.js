@@ -2,15 +2,11 @@ const { fetchCommentsByArticleId, addCommentToArticleInDB, checkArticleExists, r
 
 exports.getCommentsByArticleId = (req, res, next) => {
   const { article_id } = req.params;
-
-  checkArticleExists(article_id)
-    .then((exists) => {
-      if (!exists) {
+  Promise.all([fetchCommentsByArticleId(article_id), checkArticleExists(article_id)])
+    .then(([comments, articleExists]) => {
+      if (!articleExists) {
         return res.status(404).send({ msg: 'Article not found' });
       }
-      return fetchCommentsByArticleId(article_id);
-    })
-    .then((comments) => {
       res.status(200).send({ comments });
     })
     .catch(next);
