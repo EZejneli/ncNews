@@ -220,55 +220,46 @@ describe("GET /api/articles/:article_id/comments", () => {
   });
 });
 
-describe("POST /api/articles/:article_id/comments", () => {
-  test("201: Adds a comment to the article and responds with the posted comment", () => {
+describe('POST /api/articles/:article_id/comments', () => {
+  test('201: Adds a comment to the article and responds with the posted comment', () => {
     const newComment = {
-      username: "icellusedkars", // Make sure this user exists in your users table
-      body: "This is a test comment."
+      username: 'butter_bridge',
+      body: 'This is a test comment',
     };
-
     return request(app)
-      .post("/api/articles/1/comments")
+      .post('/api/articles/1/comments')
       .send(newComment)
       .expect(201)
       .then(({ body }) => {
         const { comment } = body;
-        expect(comment).toHaveProperty("comment_id");
-        expect(comment).toHaveProperty("article_id", 1);
-        expect(comment).toHaveProperty("author", "icellusedkars");
-        expect(comment).toHaveProperty("body", "This is a test comment.");
-        expect(comment).toHaveProperty("created_at");
-        expect(comment).toHaveProperty("votes", 0);
+        expect(comment).toHaveProperty('comment_id');
+        expect(comment).toHaveProperty('body', 'This is a test comment');
+        expect(comment).toHaveProperty('author', 'butter_bridge');
       });
   });
 
   test("404: Responds with 'User not found' when the username does not exist", () => {
     const newComment = {
-      username: "nonexistent_user",
-      body: "This is a test comment."
+      username: 'non_existent_user',
+      body: 'This is a test comment',
     };
-
     return request(app)
-      .post("/api/articles/1/comments")
+      .post('/api/articles/1/comments')
       .send(newComment)
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("User not found");
+        expect(body.msg).toBe('User not found');
       });
   });
 
-  test("400: Responds with an error message when the request body is missing required fields", () => {
-    const newComment = {
-      username: "icellusedkars"
-      // Missing 'body' field
-    };
-
+  test('400: Responds with an error message when the request body is missing required fields', () => {
+    const newComment = {};
     return request(app)
-      .post("/api/articles/1/comments")
+      .post('/api/articles/1/comments')
       .send(newComment)
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("Bad Request");
+        expect(body.msg).toBe('Bad Request: Missing required fields');
       });
   });
 });

@@ -1,9 +1,15 @@
-const { fetchCommentsByArticleId, addCommentToArticleInDB, checkArticleExists, removeCommentById, deleteComment } = require('../models/comments.model');
+const { fetchCommentsByArticleId, addCommentToArticleInDB, checkArticleExists, removeCommentById, deleteComment, addCommentToArticle } = require('../models/comments.model');
 
 exports.getCommentsByArticleId = (req, res, next) => {
   const { article_id } = req.params;
 
-  fetchCommentsByArticleId(article_id)
+  checkArticleExists(article_id)
+    .then((exists) => {
+      if (!exists) {
+        return res.status(404).send({ msg: 'Article not found' });
+      }
+      return fetchCommentsByArticleId(article_id);
+    })
     .then((comments) => {
       res.status(200).send({ comments });
     })
@@ -15,7 +21,7 @@ exports.addCommentToArticle = (req, res, next) => {
   const { username, body } = req.body;
 
   if (!username || !body) {
-    res.status(400).send({ msg: 'Bad Request' });
+    res.status(400).send({ msg: 'Bad Request: Missing required fields' });
     return;
   }
 
@@ -23,14 +29,45 @@ exports.addCommentToArticle = (req, res, next) => {
     .then((comment) => {
       res.status(201).send({ comment });
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.code === '23503') {
+        res.status(404).send({ msg: 'User not found' });
+      } else {
+        next(err);
+      }
+    });
 };
 
 exports.deleteCommentById = (req, res, next) => {
   const { comment_id } = req.params;
-  deleteComment(comment_id)
-    .then(() => {
+
+  removeCommentById(comment_id)
+    .then((result) => {
+      if (result.rowCount === 0) {
+        return res.status(404).send({ msg: 'Comment not found' });
+      }
       res.status(200).send({ msg: 'Comment successfully deleted' });
     })
     .catch(next);
+};
+
+exports.addComment = (req, res, next) => {
+  const { article_id } = req.params;
+  const { username, body } = req.body;
+
+  if (!username || !body) {
+    return res.status(400).send({ msg: 'Bad Request: Missing required fields' });
+  }
+
+  addCommentToArticle(article_id, username, body)
+    .then((comment) => {
+      res.status(201).send({ comment });
+    })
+    .catch((err) => {
+      if (err.code === '23503') {
+        res.status(404).send({ msg: 'User not found' });
+      } else {
+        next(err);
+      }
+    });
 };
