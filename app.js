@@ -4,9 +4,7 @@ const apiRouter = require('./routes/api.router');
 const commentsRouter = require('./routes/comments.router');
 const cors = require('cors');
 
-app.use(cors({
-  origin: 'http://localhost:5173'
-}));
+app.use(cors());
 app.use(express.json());
 
 app.use('/api', apiRouter);
