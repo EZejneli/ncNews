@@ -23,12 +23,8 @@ exports.fetchArticles = (sort_by = 'created_at', order = 'desc', topic) => {
   const validSortBy = ['author', 'title', 'article_id', 'topic', 'created_at', 'votes', 'article_img_url', 'comment_count'];
   const validOrder = ['asc', 'desc'];
 
-  if (!validSortBy.includes(sort_by)) {
+  if (!validSortBy.includes(sort_by) || !validOrder.includes(order)) {
     return Promise.reject({ status: 400, msg: 'Bad Request' });
-  }
-
-  if (!validOrder.includes(order)) {
-    order = 'desc';
   }
 
   const orderByClause = sort_by === 'title' 
