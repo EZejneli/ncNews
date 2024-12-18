@@ -169,7 +169,7 @@ describe("GET /api/articles", () => {
       .get("/api/articles?sort_by=invalid_column")
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("Bad Request");
+        expect(body.msg).toBe("Invalid sort_by query");
       });
   });
 
@@ -178,7 +178,25 @@ describe("GET /api/articles", () => {
       .get("/api/articles?order=invalid_order")
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("Bad Request");
+        expect(body.msg).toBe("Invalid order query");
+      });
+  });
+
+  test('GET /api/articles - 400: Responds with correct message for invalid sort_by', () => {
+    return request(app)
+      .get('/api/articles?sort_by=invalidColumn')
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Invalid sort_by query');
+      });
+  });
+
+  test('GET /api/articles - 400: Responds with correct message for invalid order query', () => {
+    return request(app)
+      .get('/api/articles?order=invalidOrder')
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Invalid order query');
       });
   });
 });
